@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Plataforma Médica - Registro y Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #3a7bd5, #141e30);
+      color: #fff;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 960px;
+      background: rgba(10, 20, 40, 0.9);
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+    }
+
+    @media (max-width: 800px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hero {
+      background: linear-gradient(
+          135deg,
+          rgba(0, 0, 0, 0.6),
+          rgba(0, 0, 30, 0.9)
+        ),
+        url("https://images.pexels.com/photos/3279207/pexels-photo-3279207.jpeg?auto=compress&cs=tinysrgb&w=1200") center/cover no-repeat;
+      padding: 32px;
+      color: #e5ecff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .hero h1 {
+      font-size: 24px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #a7c7ff;
+    }
+
+    .hero h2 {
+      font-size: 32px;
+      line-height: 1.1;
+      margin-top: 8px;
+    }
+
+    .hero p {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #c8d4ff;
+      max-width: 360px;
+    }
+
+    .hero-footer {
+      font-size: 12px;
+      color: #9fb2ff;
+    }
+
+    .panel {
+      background: rgba(7, 14, 30, 0.95);
+      padding: 24px 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      border-radius: 999px;
+      background: #0b1a3a;
+      padding: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      background: transparent;
+      color: #b8c5ff;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: #2859ff;
+      color: #fff;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+    }
+
+    .title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .row > .form-group {
+      flex: 1;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+    }
+
+    label {
+      color: #c7d2ff;
+    }
+
+    input,
+    select {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #27345d;
+      background: rgba(5, 12, 30, 0.9);
+      color: #e5ecff;
+      font-size: 13px;
+      outline: none;
+      transition: border 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input::placeholder {
+      color: #56608a;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #3c6dff;
+      box-shadow: 0 0 0 1px rgba(60, 109, 255, 0.6);
+    }
+
+    .helper {
+      font-size: 11px;
+      color: #8f9bd6;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #b2c0ff;
+      margin-top: 4px;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: #3c6dff;
+    }
+
+    .links-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .links-row a {
+      color: #8fb5ff;
+      text-decoration: none;
+    }
+
+    .links-row a:hover {
+      text-decoration: underline;
+    }
+
+    .btn-primary {
+      margin-top: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #2859ff, #3f8bff);
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
+      opacity: 0.95;
+    }
+
+    .small-note {
+      font-size: 11px;
+      color: #909cd3;
+      margin-top: 6px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .alert {
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+    }
+
+    .alert-success {
+      background: rgba(46, 204, 113, 0.12);
+      border: 1px solid rgba(46, 204, 113, 0.4);
+      color: #a6f3c8;
+    }
+
+    .alert-error {
+      background: rgba(231, 76, 60, 0.12);
+      border: 1px solid rgba(231, 76, 60, 0.4);
+      color: #ffb3ab;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="hero">
+      <div>
+        <h1>Campus Médico</h1>
+        <h2>Registro profesional<br />y acceso seguro</h2>
+        <p>
+          Plataforma para Médicos Generales, Especialistas y Médicos SOM.
+          Centraliza tu información profesional, agenda y programas de bienestar
+          en un solo lugar.
+        </p>
+      </div>
+      <div class="hero-footer">
+        *Para registrarse en la plataforma, sus datos personales deberán
+        coincidir con los registrados en su cédula profesional correspondiente.
+      </div>
+    </aside>
+
+    <main class="panel">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="register">Registro</button>
+        <button class="tab-btn" data-tab="login">Iniciar sesión</button>
+      </div>
+
+      <!-- MENSAJES -->
+      <div id="alertContainer"></div>
+
+      <!-- REGISTRO -->
+      <section id="registerSection">
+        <div class="title">Registro de médico</div>
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="tipoMedico">Tipo de médico</label>
+            <select id="tipoMedico" required>
+              <option value="" disabled selected>Selecciona una opción</option>
+              <option value="general">Médico General</option>
+              <option value="especialista">Médico Especialista</option>
+              <option value="som">Médico SOM</option>
+            </select>
+            <div class="helper">
+              El tipo de registro determina los campos específicos que se
+              mostrarán.
+            </div>
+          </div>
+
+          <!-- Campos comunes -->
+          <div class="row">
+            <div class="form-group">
+              <label for="nombre">Nombre</label>
+              <input
+                id="nombre"
+                type="text"
+                placeholder="Nombre(s)"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="apellidoP">Apellido paterno</label>
+              <input
+                id="apellidoP"
+                type="text"
+                placeholder="Apellido paterno"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group">
+              <label for="apellidoM">Apellido materno</label>
+              <input
+                id="apellidoM"
+                type="text"
+                placeholder="Apellido materno"
+              />
+            </div>
+            <div class="form-group">
+              <label for="fechaNacimiento">Fecha de nacimiento</label>
+              <input
+                id="fechaNacimiento"
+                type="date"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- ESPECIALISTA -->
+          <div id="especialistaFields" class="hidden">
+            <div class="form-group">
+              <label for="especialidad">Especialidad</label>
+              <select id="especialidad">
+                <option value="" disabled selected>
+                  Seleccione especialidad
+                </option>
+                <option value="Cardiología">Cardiología</option>
+                <option value="Dermatología">Dermatología</option>
+                <option value="Ginecología">Ginecología</option>
+                <option value="Pediatría">Pediatría</option>
+                <option value="Medicina Interna">Medicina Interna</option>
+                <option value="Otra">Otra</option>
+              </select>
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                <label for="cedulaEspecialidad">Cédula de especialidad</label>
+                <input
+                  id="cedulaEspecialidad"
+                  type="text"
+                  placeholder="Número de cédula de especialidad"
+                />
+              </div>
+              <div class="form-group">
+                <label for="institucionEspecialidad">Institución que expide</label>
+                <input
+                  id="institucionEspecialidad"
+                  type="text"
+                  placeholder="Ej. UNAM, IPN, etc."
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- GENERAL -->
+          <div id="generalFields" class="hidden">
+            <div class="row">
+              <div class="form-group">
+                <label for="cedulaProfesionalGeneral">Cédula profesional</label>
+                <input
+                  id="cedulaProfesionalGeneral"
+                  type="text"
+                  placeholder="Número de cédula profesional"
+                />
+              </div>
+              <div class="form-group">
+                <label for="institucionGeneral">Institución que expide</label>
+                <input
+                  id="institucionGeneral"
+                  type="text"
+                  placeholder="Ej. UNAM, IPN, etc."
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- SOM -->
+          <div id="somFields" class="hidden">
+            <div class="form-group">
+              <label for="somPlaza">Elige tu plaza</label>
+              <select id="somPlaza">
+                <option value="" disabled selected>Selecciona una plaza</option>
+                <!-- Se llena con JS -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="somSelect">Elige tu SOM</label>
+              <select id="somSelect">
+                <option value="" disabled selected>Selecciona el SOM</option>
+                <!-- Se llena con JS -->
+              </select>
+              <div class="helper">
+                Datos de ejemplo basados en el Excel de plazas y SOM. Puedes
+                ampliar el catálogo en el código.
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group">
+                <label for="cedulaProfesionalSom">Cédula profesional</label>
+                <input
+                  id="cedulaProfesionalSom"
+                  type="text"
+                  placeholder="Número de cédula profesional"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- COMUNES CONTINUACIÓN -->
+          <div class="row">
+            <div class="form-group">
+              <label for="email">Correo electrónico</label>
+              <input
+                id="email"
+                type="email"
+                placeholder="correo@ejemplo.com"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="telefono">Teléfono móvil (10 dígitos)</label>
+              <input
+                id="telefono"
+                type="tel"
+                placeholder="Ej. 5512345678"
+                pattern="[0-9]{10}"
+                />
+            </div>
+          </div>
+
+          <!-- Usuario / password para login -->
+          <div class="row">
+            <div class="form-group">
+              <label for="username">Usuario</label>
+              <input
+                id="username"
+                type="text"
+                autocomplete="off"
+                placeholder="Usuario para iniciar sesión"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="password">Contraseña</label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Mínimo 6 caracteres"
+                minlength="6"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="checkbox-row">
+            <input id="referidos" type="checkbox" />
+            <label for="referidos">
+              Inscribirme en programa de referenciados
+            </label>
+          </div>
+
+          <div class="links-row">
+            <a href="#aviso">Aviso de privacidad</a>
+            <a href="#terminos">Términos y condiciones</a>
+          </div>
+
+          <button type="submit" class="btn-primary">Regístrate</button>
+
+          <div class="small-note">
+            Al registrarte aceptas que la información proporcionada es
+            verídica y puede ser validada con los colegios y autoridades
+            correspondientes.
+          </div>
+        </form>
+      </section>
+
+      <!-- LOGIN -->
+      <section id="loginSection" class="hidden">
+        <div class="title">Iniciar sesión</div>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="loginUsername">Usuario</label>
+            <input
+              id="loginUsername"
+              type="text"
+              autocomplete="off"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Contraseña</label>
+            <input id="loginPassword" type="password" required />
+          </div>
+          <button type="submit" class="btn-primary">Entrar</button>
+          <div class="small-note">
+            Para el MVP, los usuarios y contraseñas se almacenan únicamente en
+            este navegador mediante <code>localStorage</code>.
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ============================================
+    //   DATOS DE EJEMPLO PARA PLAZA / SOM
+    //   (Basados en el Excel "Noviembre solo som y plaza")
+    //   Puedes pegar el catálogo completo siguiendo este formato.
+    // ============================================
+    const somData = {
+      "ACAPULCO": [
+        "ACAT_ATOYAC_04129",
+        "ACAU_CUAUHTEMOC_03992",
+        "ACBE_18 DE MARZO_03360",
+        "ACBH_BAHIA_05409",
+        "ACBS_RIO BALSAS_05647"
+      ],
+      "AGUASCALIENTES": [
+        "AG3A_3ER ANILLO_03452",
+        "AGAG_AGOSTADERO_03656",
+        "AGAN_ASUNCION_04462",
+        "AGAO_ALVARO OBREGON_04458",
+        "AGAS_PASEO DE LA ASUNCION_04370"
+      ],
+      "BAJA CALIFORNIA NORTE": [
+        "BNAI_CALIENTE_05597",
+        "BNID_INDUSTRIAL_05614",
+        "BNPF_PACIFICO_05648",
+        "BNRA_REFORMA_05596",
+        "BNRZ_RUIZ_05601"
+      ]
+      // 👉 Añade aquí el resto de plazas y SOM exactamente como vienen en tu Excel
+      // "CAMPECHE": ["...", "..."],
+      // ...
+    };
+
+    // ============================================
+    //   UTILIDADES UI
+    // ============================================
+    const tabs = document.querySelectorAll(".tab-btn");
+    const registerSection = document.getElementById("registerSection");
+    const loginSection = document.getElementById("loginSection");
+    const alertContainer = document.getElementById("alertContainer");
+
+    tabs.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        tabs.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        const tab = btn.dataset.tab;
+        if (tab === "register") {
+          registerSection.classList.remove("hidden");
+          loginSection.classList.add("hidden");
+          clearAlerts();
+        } else {
+          loginSection.classList.remove("hidden");
+          registerSection.classList.add("hidden");
+          clearAlerts();
+        }
+      });
+    });
+
+    function showAlert(message, type = "success") {
+      alertContainer.innerHTML = "";
+      const div = document.createElement("div");
+      div.classList.add("alert");
+      if (type === "success") {
+        div.classList.add("alert-success");
+      } else {
+        div.classList.add("alert-error");
+      }
+      div.textContent = message;
+      alertContainer.appendChild(div);
+    }
+
+    function clearAlerts() {
+      alertContainer.innerHTML = "";
+    }
+
+    // ============================================
+    //   CONTROL CAMPOS SEGÚN TIPO DE MÉDICO
+    // ============================================
+    const tipoMedicoSelect = document.getElementById("tipoMedico");
+    const especialistaFields = document.getElementById("especialistaFields");
+    const generalFields = document.getElementById("generalFields");
+    const somFields = document.getElementById("somFields");
+
+    tipoMedicoSelect.addEventListener("change", updateFieldsVisibility);
+
+    function updateFieldsVisibility() {
+      const tipo = tipoMedicoSelect.value;
+      especialistaFields.classList.add("hidden");
+      generalFields.classList.add("hidden");
+      somFields.classList.add("hidden");
+
+      if (tipo === "especialista") {
+        especialistaFields.classList.remove("hidden");
+      } else if (tipo === "general") {
+        generalFields.classList.remove("hidden");
+      } else if (tipo === "som") {
+        somFields.classList.remove("hidden");
+      }
+    }
+
+    // ============================================
+    //   POBLAR PLAZAS / SOM DESDE somData
+    // ============================================
+    const somPlazaSelect = document.getElementById("somPlaza");
+    const somSelect = document.getElementById("somSelect");
+
+    function populatePlazas() {
+      const plazas = Object.keys(somData).sort();
+      plazas.forEach((plaza) => {
+        const opt = document.createElement("option");
+        opt.value = plaza;
+        opt.textContent = plaza;
+        somPlazaSelect.appendChild(opt);
+      });
+    }
+
+    function populateSomOptions(plaza) {
+      somSelect.innerHTML =
+        '<option value="" disabled selected>Selecciona el SOM</option>';
+      const soms = somData[plaza] || [];
+      soms.forEach((s) => {
+        const opt = document.createElement("option");
+        opt.value = s;
+        opt.textContent = s;
+        somSelect.appendChild(opt);
+      });
+    }
+
+    somPlazaSelect.addEventListener("change", (e) => {
+      populateSomOptions(e.target.value);
+    });
+
+    populatePlazas();
+
+    // ============================================
+    //   REGISTRO: GUARDAR EN localStorage
+    // ============================================
+    const registerForm = document.getElementById("registerForm");
+
+    function getStoredUsers() {
+      try {
+        const raw = localStorage.getItem("medUsers");
+        if (!raw) return [];
+        return JSON.parse(raw);
+      } catch (e) {
+        console.error("Error leyendo medUsers", e);
+        return [];
+      }
+    }
+
+    function setStoredUsers(users) {
+      localStorage.setItem("medUsers", JSON.stringify(users));
+    }
+
+    registerForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      clearAlerts();
+
+      const tipo = tipoMedicoSelect.value;
+      if (!tipo) {
+        showAlert("Selecciona el tipo de médico.", "error");
+        return;
+      }
+
+      const nombre = document.getElementById("nombre").value.trim();
+      const apellidoP = document.getElementById("apellidoP").value.trim();
+      const apellidoM = document.getElementById("apellidoM").value.trim();
+      const fechaNacimiento =
+        document.getElementById("fechaNacimiento").value;
+
+      const email = document.getElementById("email").value.trim();
+      const telefono = document.getElementById("telefono").value.trim();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!username || !password) {
+        showAlert(
+          "Usuario y contraseña son obligatorios para registrarte.",
+          "error"
+        );
+        return;
+      }
+
+      const users = getStoredUsers();
+      const duplicado = users.find((u) => u.username === username);
+
+      if (duplicado) {
+        showAlert(
+          "Ya existe un usuario con ese nombre. Elige otro usuario.",
+          "error"
+        );
+        return;
+      }
+
+      // Campos específicos por tipo
+      let infoTipo = {};
+
+      if (tipo === "especialista") {
+        infoTipo.especialidad =
+          document.getElementById("especialidad").value || null;
+        infoTipo.cedulaEspecialidad =
+          document.getElementById("cedulaEspecialidad").value.trim() || null;
+        infoTipo.institucionEspecialidad =
+          document
+            .getElementById("institucionEspecialidad")
+            .value.trim() || null;
+      } else if (tipo === "general") {
+        infoTipo.cedulaProfesional =
+          document
+            .getElementById("cedulaProfesionalGeneral")
+            .value.trim() || null;
+        infoTipo.institucionGeneral =
+          document.getElementById("institucionGeneral").value.trim() || null;
+      } else if (tipo === "som") {
+        infoTipo.plaza = somPlazaSelect.value || null;
+        infoTipo.som = somSelect.value || null;
+        infoTipo.cedulaProfesional =
+          document.getElementById("cedulaProfesionalSom").value.trim() || null;
+      }
+
+      const nuevoUsuario = {
+        tipo,
+        nombre,
+        apellidoP,
+        apellidoM,
+        fechaNacimiento,
+        email,
+        telefono,
+        username,
+        password,
+        infoTipo,
+        referidos: document.getElementById("referidos").checked,
+        creadoEn: new Date().toISOString()
+      };
+
+      users.push(nuevoUsuario);
+      setStoredUsers(users);
+
+      registerForm.reset();
+      updateFieldsVisibility();
+      populatePlazas(); // por si se limpian selects
+
+      showAlert(
+        "Registro exitoso. Ahora puedes iniciar sesión con tu usuario y contraseña.",
+        "success"
+      );
+
+      // Cambiar a pestaña de login automáticamente
+      tabs.forEach((b) => {
+        if (b.dataset.tab === "login") {
+          b.click();
+        }
+      });
+    });
+
+    // ============================================
+    //   LOGIN BÁSICO
+    // ============================================
+    const loginForm = document.getElementById("loginForm");
+
+    loginForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      clearAlerts();
+
+      const username = document
+        .getElementById("loginUsername")
+        .value.trim();
+      const password = document.getElementById("loginPassword").value;
+
+      const users = getStoredUsers();
+      const user = users.find(
+        (u) => u.username === username && u.password === password
+      );
+
+      if (!user) {
+        showAlert("Usuario o contraseña incorrectos.", "error");
+        return;
+      }
+
+      showAlert(
+        `Bienvenido(a), Dr(a). ${user.nombre} ${user.apellidoP}. Tipo: ${user.tipo.toUpperCase()}`,
+        "success"
+      );
+
+      // En un siguiente paso, aquí podrías redirigir a dashboard.html
+      window.location.href = "dashboard.html";
+    });
+  </script>
+</body>
+</html>
