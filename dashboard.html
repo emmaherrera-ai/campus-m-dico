@@ -1295,7 +1295,7 @@
               </div>
             </div>
           </div>
-        <span>Aprendizaje</span>
+        <span id="navLearn" class="top-nav-item">Aprendizaje</span>
         <span id="navTools" class="top-nav-item">Herramientas</span>
       </nav>
       <div class="nav-user-wrapper">
@@ -2394,6 +2394,19 @@
         e.preventDefault(); // por si es <a>
         window.open(
         "https://www.campus-medicofa.com/revistawebmovil/Default.aspx",
+        "_blank",
+        "noopener"
+        );
+    });
+    }
+
+    const navLearn = document.getElementById("navLearn");
+
+    if (navLearn) {
+    navLearn.addEventListener("click", (e) => {
+        e.preventDefault(); // por si es <a>
+        window.open(
+        "/learning.html",
         "_blank",
         "noopener"
         );

@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Curso · Plataforma Médica</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+      min-height: 100vh;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    button {
+      font-family: inherit;
+    }
+
+    /* ===== NAVBAR ===== */
+    .top-nav {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      background: #020617;
+      border-bottom: 1px solid #1e293b;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-left,
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-logo {
+      font-weight: 700;
+      font-size: 14px;
+      margin-right: 14px;
+    }
+    .top-nav-item {
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      color: #cbd5e1;
+    }
+    .top-nav-item:hover {
+      background: rgba(148, 163, 184, 0.18);
+      color: #e5e7eb;
+    }
+    .top-nav-item.active {
+      background: #1d4ed8;
+      color: #f9fafb;
+    }
+
+    /* US menu */
+    .nav-user-wrapper {
+      position: relative;
+    }
+    .nav-user-btn {
+      border: none;
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 999px;
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    #navUserInitials {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #020617;
+    }
+    .user-dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      width: 230px;
+      background: #020617;
+      border: 1px solid #1f2937;
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8);
+      display: none;
+      z-index: 200;
+    }
+    .user-dropdown.show { display: block; }
+    .user-dropdown-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #1f2937;
+      margin-bottom: 6px;
+    }
+    .user-avatar-small {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #020617;
+    }
+    .user-name { font-size: 13px; font-weight: 600; }
+    .user-email { font-size: 11px; color: #9ca3af; }
+    .user-dropdown-item {
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: #e5e7eb;
+      text-align: left;
+      padding: 7px 6px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .user-dropdown-item:hover { background: #1e293b; }
+    .user-dropdown-item[data-action="logout"] { color: #f97373; }
+
+    /* ===== VADEMÉCUM SPOTLIGHT ===== */
+    .vademecum-wrapper { position: relative; }
+    .vademecum-trigger {
+      border: none;
+      background: transparent;
+      color: #cbd5e1;
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .vademecum-trigger:hover {
+      background: rgba(148, 163, 184, 0.18);
+      color: #e5e7eb;
+    }
+    .vademecum-panel {
+      position: absolute;
+      left: 0;
+      top: calc(100% + 8px);
+      width: 320px;
+      background: #020617;
+      border-radius: 14px;
+      border: 1px solid #1f2937;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85);
+      padding: 10px 10px 8px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(4px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 190;
+    }
+    .vademecum-wrapper.open .vademecum-panel {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .vademecum-search-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .vademecum-label { font-size: 13px; font-weight: 600; }
+    .vademecum-hint { font-size: 11px; color: #9ca3af; }
+    .vademecum-search-box input {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid #1e293b;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 7px 10px;
+      font-size: 13px;
+      margin-bottom: 8px;
+      outline: none;
+    }
+    .vademecum-results { display: flex; flex-direction: column; gap: 4px; }
+    .vademecum-result-item {
+      width: 100%;
+      text-align: left;
+      border-radius: 10px;
+      border: none;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 7px 8px;
+      cursor: pointer;
+    }
+    .vademecum-result-item .title { font-size: 13px; font-weight: 600; }
+    .vademecum-result-item .subtitle { font-size: 11px; color: #9ca3af; }
+    .vademecum-result-item:hover { background: #1e293b; }
+    .vademecum-main { border: 1px solid #2563eb; }
+
+    /* ===== LAYOUT CURSO ===== */
+    .course-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      height: calc(100vh - 60px);
+    }
+    .course-sidebar {
+      background: #020617;
+      border-right: 1px solid #1e293b;
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .course-back {
+      font-size: 13px;
+      color: #93c5fd;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+    .course-title {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .course-progress-wrapper {
+      margin-top: 6px;
+      margin-bottom: 4px;
+    }
+    .course-progress-label {
+      font-size: 11px;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 3px;
+    }
+    .course-progress-bar {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: #0f172a;
+      overflow: hidden;
+    }
+    .course-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #16a34a);
+      width: 0%;
+    }
+
+    .modules-list {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .module-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #e5e7eb;
+    }
+    .module-item:hover { background: #0b1220; }
+    .module-item.active {
+      background: #111827;
+      border: 1px solid #1d4ed8;
+    }
+    .module-status-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+    .status-done {
+      background: #064e3b;
+      color: #bbf7d0;
+    }
+    .status-current {
+      background: #1d4ed8;
+      color: #eff6ff;
+    }
+    .status-locked {
+      background: #111827;
+      color: #6b7280;
+    }
+
+    .course-main {
+      padding: 22px 28px;
+      overflow-y: auto;
+    }
+    .course-main h1 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    .course-main h2 {
+      font-size: 18px;
+      margin-top: 18px;
+      margin-bottom: 6px;
+    }
+    .course-main p {
+      font-size: 14px;
+      color: #cbd5e1;
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .course-hero {
+      width: 100%;
+      max-width: 640px;
+      margin: 10px auto 16px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #1f2937;
+    }
+    .course-hero img {
+      width: 100%;
+      display: block;
+    }
+    .course-note {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 12px;
+      border-top: 1px solid #1f2937;
+      padding-top: 8px;
+    }
+    .course-eval-btn {
+      margin-top: 16px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #1d4ed8;
+      color: #f9fafb;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .course-eval-btn:hover { background: #2563eb; }
+
+    @media (max-width: 900px) {
+      .course-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      .course-main {
+        padding: 18px 16px 80px;
+      }
+      .course-sidebar {
+        border-right: none;
+        border-bottom: 1px solid #1e293b;
+      }
+    }
+
+    /* ===== BOTÓN FLOTANTE ALGORITMOS ===== */
+    .alg-btn {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      border-radius: 999px;
+      border: none;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #f9fafb;
+      cursor: pointer;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+      z-index: 180;
+    }
+    .alg-btn:hover { transform: translateY(-1px); }
+
+    .alg-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 170;
+    }
+    .alg-backdrop.show { display: flex; }
+    .alg-modal {
+      width: min(900px, 96vw);
+      max-height: 90vh;
+      background: #020617;
+      border-radius: 18px;
+      border: 1px solid #1f2937;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.9);
+      padding: 14px 14px 12px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 800px) {
+      .alg-modal { grid-template-columns: 1fr; }
+    }
+    .alg-modal h3 {
+      grid-column: 1 / -1;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    .alg-item {
+      width: 100%;
+      text-align: left;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 12px;
+      padding: 7px 8px;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+    .alg-item:hover { background: #1e293b; }
+    .alg-preview {
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .alg-preview img {
+      max-width: 100%;
+      max-height: 80vh;
+      display: block;
+    }
+    .alg-close-btn {
+      grid-column: 1 / -1;
+      justify-self: flex-end;
+      margin-top: 4px;
+      font-size: 11px;
+      border-radius: 999px;
+      border: none;
+      padding: 4px 10px;
+      background: #111827;
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <span class="nav-logo">Campus Médico</span>
+
+      <a href="dashboard.html" class="top-nav-item">Inicio</a>
+
+      <span id="navTools" class="top-nav-item">Herramientas</span>
+
+      <div class="top-nav-item vademecum-wrapper">
+        <button class="vademecum-trigger" id="vademecumTrigger">Vademécum</button>
+        <div class="vademecum-panel" id="vademecumPanel">
+          <div class="vademecum-search-header">
+            <span class="vademecum-label">Vademécum</span>
+            <span class="vademecum-hint">Búsqueda avanzada próximamente</span>
+          </div>
+          <div class="vademecum-search-box">
+            <input id="vademecumSearch" type="text"
+                   placeholder="Busca síntomas, marcas o principios activos…" />
+          </div>
+          <div class="vademecum-results">
+            <button
+              class="vademecum-result-item vademecum-main"
+              data-url="https://www.campus-medicofa.com/revistawebmovil/Vademecum.aspx">
+              <div class="title">Vademécum Campus Médico</div>
+              <div class="subtitle">Consulta completa de productos y fichas técnicas.</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <a href="learning.html" class="top-nav-item active">Aprendizaje</a>
+    </div>
+
+    <div class="nav-right">
+      <div class="nav-user-wrapper">
+        <button id="navUserButton" class="nav-user-btn">
+          <span id="navUserInitials">US</span>
+        </button>
+        <div id="userDropdown" class="user-dropdown">
+          <div class="user-dropdown-header">
+            <div id="userAvatarInitials" class="user-avatar-small">US</div>
+            <div>
+              <div id="userDropdownName" class="user-name">Usuario</div>
+              <div id="userDropdownEmail" class="user-email">usuario@correo.com</div>
+            </div>
+          </div>
+          <button class="user-dropdown-item" data-action="profile">Perfil</button>
+          <button class="user-dropdown-item" data-action="grades">Calificaciones</button>
+          <button class="user-dropdown-item" data-action="logout">Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- LAYOUT CURSO -->
+  <div class="course-layout">
+    <aside class="course-sidebar">
+      <div class="course-back" id="btnBack">
+        <span>‹</span> <span>Atrás</span>
+      </div>
+
+      <div class="course-title" id="courseTitle">
+        <!-- título desde JS -->
+      </div>
+
+      <div class="course-progress-wrapper">
+        <div class="course-progress-label">
+          <span>Progreso</span>
+          <span id="courseProgressText">0%</span>
+        </div>
+        <div class="course-progress-bar">
+          <div id="courseProgressFill" class="course-progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="modules-list" id="modulesList">
+        <!-- módulos desde JS -->
+      </div>
+    </aside>
+
+    <main class="course-main" id="courseContent">
+      <!-- contenido de módulo actual -->
+    </main>
+  </div>
+
+  <!-- BOTÓN FLOTANTE ALGORITMOS -->
+  <button id="algButton" class="alg-btn">Algoritmo</button>
+
+  <!-- MODAL ALGORITMOS -->
+  <div id="algModalBackdrop" class="alg-backdrop">
+    <div class="alg-modal">
+      <h3>Algoritmos clínicos</h3>
+
+      <div>
+        <button class="alg-item"
+          data-img="https://via.placeholder.com/900x600.png?text=Algoritmo+Ansiedad">
+          Ansiedad
+        </button>
+        <button class="alg-item"
+          data-img="https://via.placeholder.com/900x600.png?text=Algoritmo+Depresion">
+          Depresión
+        </button>
+        <button class="alg-item"
+          data-img="https://via.placeholder.com/900x600.png?text=Algoritmo+Estres">
+          Estrés
+        </button>
+        <button class="alg-item"
+          data-img="https://via.placeholder.com/900x600.png?text=Algoritmo+LAB+Ginecologia">
+          LAB Ginecológico
+        </button>
+      </div>
+
+      <div class="alg-preview">
+        <img id="algPreviewImage" src="" alt="Algoritmo clínico" />
+      </div>
+
+      <button id="algClose" class="alg-close-btn">Cerrar</button>
+    </div>
+  </div>
+
+  <script>
+    // ========= DATA DEMO DEL CURSO =========
+    // Puedes crear más objetos así para otros cursos
+    const courseData = {
+      id: "ojo-seco",
+      title: "Enfermedad por ojo seco y alergias oculares",
+      imageIntro: "https://via.placeholder.com/1200x500.png?text=Sinopsis+Ojo+Seco",
+      modules: [
+        {
+          id: "intro",
+          title: "Sinopsis",
+          status: "done", // done | current | locked
+          content: `
+            <h1>SINOPSIS · Ojo seco y alergia ocular</h1>
+            <div class="course-hero">
+              <img src="https://via.placeholder.com/1200x500.png?text=ZonakerT+-+Banner+Sinopsis" alt="Banner ZonakerT" />
+            </div>
+            <p>
+              El síndrome de ojo seco y las alergias oculares son causas
+              frecuentes de consulta en el primer nivel de atención. Esta sinopsis
+              resume la fisiopatología básica, el enfoque diagnóstico inicial
+              y los principales criterios para diferenciar ojo seco de alergia ocular.
+            </p>
+            <p>
+              A través de casos clínicos breves, el médico podrá reconocer los síntomas
+              cardinales, identificar factores de riesgo y seleccionar el tratamiento
+              lubricante y/o antiinflamatorio más adecuado para cada paciente.
+            </p>
+            <p class="course-note">
+              Recuerda revisar también el algoritmo de manejo rápido desde el botón
+              flotante de <strong>Algoritmos</strong>.
+            </p>
+          `
+        },
+        {
+          id: "mod1",
+          title: "Módulo 1 · Fisiopatología y diagnóstico",
+          status: "done",
+          content: `
+            <h1>Módulo 1 · Fisiopatología y diagnóstico</h1>
+            <p>
+              En este módulo revisamos los mecanismos fisiopatológicos del ojo seco,
+              la clasificación actual y los principales estudios diagnósticos disponibles
+              en la consulta de primer nivel.
+            </p>
+            <h2>Objetivos de aprendizaje</h2>
+            <p>Al finalizar el módulo, el participante será capaz de:</p>
+            <ul style="margin-left:18px; font-size:14px; color:#cbd5e1; line-height:1.6;">
+              <li>Identificar los componentes de la película lagrimal.</li>
+              <li>Distinguir entre ojo seco evaporativo y acuodeficiente.</li>
+              <li>Aplicar una anamnesis dirigida y exploración física focalizada.</li>
+              <li>Reconocer datos de alarma que ameritan referencia.</li>
+            </ul>
+            <p class="course-note">
+              Sugerencia: realiza una nota Osler corta con los hallazgos clave de tu último caso de ojo seco.
+            </p>
+          `
+        },
+        {
+          id: "mod2",
+          title: "Módulo 2 · Tratamiento y seguimiento",
+          status: "current",
+          content: `
+            <h1>Módulo 2 · Tratamiento y seguimiento</h1>
+            <p>
+              Aquí se abordan las opciones terapéuticas de primera línea, desde
+              medidas generales hasta el uso de lubricantes oculares y otros tratamientos
+              farmacológicos.
+            </p>
+            <h2>Plan de manejo inicial</h2>
+            <p>
+              Repasamos la regla <strong>20-20-20</strong>, higiene palpebral, selección
+              de lubricantes sin conservadores y criterios para escalar tratamiento
+              o referir a oftalmología.
+            </p>
+            <p class="course-note">
+              Marca este módulo como completado cuando hayas revisado el algoritmo de tratamiento
+              en el material descargable.
+            </p>
+          `
+        },
+        {
+          id: "eval",
+          title: "Evaluación",
+          status: "locked",
+          content: `
+            <h1>Evaluación del curso</h1>
+            <p>
+              Responde la evaluación para consolidar los conceptos clínicos clave
+              y generar tu constancia digital.
+            </p>
+            <p>
+              En esta beta, simularemos la evaluación con un botón de completado.
+            </p>
+            <button class="course-eval-btn" id="btnSimEval">
+              Simular evaluación aprobada
+            </button>
+          `
+        }
+      ]
+    };
+
+    // Calcula progreso según módulos "done"
+    function calculateProgress(course) {
+      const total = course.modules.length;
+      const done = course.modules.filter(m => m.status === "done").length;
+      return Math.round((done / total) * 100);
+    }
+
+    // ========= UTILIDADES USUARIO NAV =========
+    function getCurrentUser() {
+      const raw = localStorage.getItem("currentUser");
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
+    }
+    function getInitials(name) {
+      if (!name) return "US";
+      const parts = name.trim().split(/\s+/);
+      let ini = parts[0][0] || "";
+      if (parts.length > 1) ini += parts[parts.length - 1][0] || "";
+      return ini.toUpperCase();
+    }
+
+    // ========= INIT NAV US =========
+    const navUserButton = document.getElementById("navUserButton");
+    const userDropdown = document.getElementById("userDropdown");
+    const navUserInitialsEl = document.getElementById("navUserInitials");
+    const userAvatarInitials = document.getElementById("userAvatarInitials");
+    const userDropdownName = document.getElementById("userDropdownName");
+    const userDropdownEmail = document.getElementById("userDropdownEmail");
+
+    (function initUserNav() {
+      const user = getCurrentUser();
+      if (!user) return;
+      const displayName = user.nombre || user.name || "Usuario";
+      const email = user.email || user.correo || "";
+      const initials = getInitials(displayName);
+
+      navUserInitialsEl.textContent = initials;
+      userAvatarInitials.textContent = initials;
+      userDropdownName.textContent = displayName;
+      userDropdownEmail.textContent = email;
+    })();
+
+    if (navUserButton && userDropdown) {
+      navUserButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        userDropdown.classList.toggle("show");
+      });
+      document.addEventListener("click", (e) => {
+        if (!userDropdown.contains(e.target) &&
+            !navUserButton.contains(e.target)) {
+          userDropdown.classList.remove("show");
+        }
+      });
+    }
+
+    // Acciones del menú US (perfil / calificaciones / logout)
+    userDropdown.querySelectorAll(".user-dropdown-item").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const action = btn.getAttribute("data-action");
+        userDropdown.classList.remove("show");
+        if (action === "logout") {
+          localStorage.removeItem("currentUser");
+          window.location.href = "index.html";
+        } else if (action === "profile") {
+          alert("Perfil: en esta beta se edita desde el dashboard.");
+        } else if (action === "grades") {
+          alert("Progreso: se mostrará en la vista de Aprendizaje.");
+        }
+      });
+    });
+
+    // ========= NAV HERRAMIENTAS =========
+    const navTools = document.getElementById("navTools");
+    if (navTools) {
+      navTools.style.cursor = "pointer";
+      navTools.addEventListener("click", () => {
+        window.open(
+          "https://www.campus-medicofa.com/revistawebmovil/Default.aspx",
+          "_blank",
+          "noopener"
+        );
+      });
+    }
+
+    // ========= VADEMÉCUM =========
+    const vademecumWrapper = document.querySelector(".vademecum-wrapper");
+    const vademecumTrigger = document.getElementById("vademecumTrigger");
+    const vademecumPanel = document.getElementById("vademecumPanel");
+    const vademecumMainBtn = document.querySelector(".vademecum-main");
+    const vademecumSearchInput = document.getElementById("vademecumSearch");
+
+    if (vademecumMainBtn) {
+      const url = vademecumMainBtn.getAttribute("data-url");
+      vademecumMainBtn.addEventListener("click", () => {
+        window.open(url, "_blank", "noopener");
+      });
+    }
+    if (vademecumWrapper && vademecumTrigger && vademecumPanel) {
+      vademecumTrigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isOpen = vademecumWrapper.classList.contains("open");
+        if (isOpen) {
+          vademecumWrapper.classList.remove("open");
+        } else {
+          vademecumWrapper.classList.add("open");
+          if (vademecumSearchInput) {
+            setTimeout(() => vademecumSearchInput.focus(), 60);
+          }
+        }
+      });
+      document.addEventListener("click", (e) => {
+        if (!vademecumWrapper.contains(e.target)) {
+          vademecumWrapper.classList.remove("open");
+        }
+      });
+    }
+    if (vademecumSearchInput && vademecumMainBtn) {
+      vademecumSearchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          vademecumMainBtn.click();
+        }
+      });
+    }
+
+    // ========= BOTÓN ALGORITMOS =========
+    const algButton = document.getElementById("algButton");
+    const algBackdrop = document.getElementById("algModalBackdrop");
+    const algClose = document.getElementById("algClose");
+    const algPreviewImg = document.getElementById("algPreviewImage");
+    const algItems = document.querySelectorAll(".alg-item");
+
+    algButton.addEventListener("click", () => algBackdrop.classList.add("show"));
+    algClose.addEventListener("click", () => algBackdrop.classList.remove("show"));
+    algBackdrop.addEventListener("click", (e) => {
+      if (e.target === algBackdrop) algBackdrop.classList.remove("show");
+    });
+    algItems.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const img = btn.getAttribute("data-img");
+        algPreviewImg.src = img;
+      });
+    });
+
+    // ========= LÓGICA DEL CURSO =========
+    const courseTitleEl = document.getElementById("courseTitle");
+    const courseProgressText = document.getElementById("courseProgressText");
+    const courseProgressFill = document.getElementById("courseProgressFill");
+    const modulesListEl = document.getElementById("modulesList");
+    const courseContentEl = document.getElementById("courseContent");
+    const btnBack = document.getElementById("btnBack");
+
+    btnBack.addEventListener("click", () => {
+      window.location.href = "learning.html";
+    });
+
+    let currentModuleId = "intro";
+
+    function renderSidebar(course) {
+      courseTitleEl.textContent = course.title;
+      const progress = calculateProgress(course);
+      courseProgressText.textContent = progress + "%";
+      courseProgressFill.style.width = progress + "%";
+
+      modulesListEl.innerHTML = "";
+      course.modules.forEach(mod => {
+        const item = document.createElement("div");
+        item.className = "module-item" + (mod.id === currentModuleId ? " active" : "");
+        item.dataset.moduleId = mod.id;
+
+        const icon = document.createElement("div");
+        icon.classList.add("module-status-icon");
+        if (mod.status === "done") {
+          icon.classList.add("status-done");
+          icon.textContent = "✓";
+        } else if (mod.status === "current") {
+          icon.classList.add("status-current");
+          icon.textContent = "•";
+        } else {
+          icon.classList.add("status-locked");
+          icon.textContent = "×";
+        }
+
+        const label = document.createElement("span");
+        label.textContent = mod.title;
+
+        item.appendChild(icon);
+        item.appendChild(label);
+        modulesListEl.appendChild(item);
+      });
+    }
+
+    function renderModule(course, moduleId) {
+      const mod = course.modules.find(m => m.id === moduleId);
+      if (!mod) return;
+
+      currentModuleId = moduleId;
+      // Actualiza active en sidebar
+      Array.from(modulesListEl.children).forEach(el => {
+        el.classList.toggle("active", el.dataset.moduleId === moduleId);
+      });
+
+      courseContentEl.innerHTML = mod.content;
+
+      // Si estamos en evaluación, enganchamos el botón simulado
+      if (moduleId === "eval") {
+        const btnSimEval = document.getElementById("btnSimEval");
+        if (btnSimEval) {
+          btnSimEval.addEventListener("click", () => {
+            alert("Evaluación aprobada (simulada en la beta).");
+            mod.status = "done";
+            const mod2 = course.modules.find(m => m.id === "mod2");
+            if (mod2 && mod2.status === "current") mod2.status = "done";
+            renderSidebar(course);
+          });
+        }
+      }
+    }
+
+    // Inicializa curso
+    renderSidebar(courseData);
+    renderModule(courseData, currentModuleId);
+
+    // Click en módulos
+    modulesListEl.addEventListener("click", (e) => {
+      const item = e.target.closest(".module-item");
+      if (!item) return;
+      const moduleId = item.dataset.moduleId;
+      const mod = courseData.modules.find(m => m.id === moduleId);
+      if (!mod) return;
+      if (mod.status === "locked") {
+        alert("Completa los módulos previos antes de acceder a esta sección.");
+        return;
+      }
+      renderModule(courseData, moduleId);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Aprendizaje · Plataforma Médica</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    /* =============== RESET BÁSICO =============== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+      min-height: 100vh;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    button {
+      font-family: inherit;
+    }
+
+    /* =============== TOP NAV =============== */
+    .top-nav {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      background: #020617;
+      border-bottom: 1px solid #1e293b;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-left,
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-logo {
+      font-weight: 700;
+      font-size: 14px;
+      margin-right: 14px;
+    }
+    .top-nav-item {
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      color: #cbd5e1;
+    }
+    .top-nav-item:hover {
+      background: rgba(148, 163, 184, 0.18);
+      color: #e5e7eb;
+    }
+    .top-nav-item.active {
+      background: #1d4ed8;
+      color: #f9fafb;
+    }
+
+    /* =============== USER MENU (US) =============== */
+    .nav-user-wrapper {
+      position: relative;
+    }
+    .nav-user-btn {
+      border: none;
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 999px;
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    #navUserInitials {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #020617;
+    }
+    .user-dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      width: 230px;
+      background: #020617;
+      border: 1px solid #1f2937;
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8);
+      display: none;
+      z-index: 200;
+    }
+    .user-dropdown.show {
+      display: block;
+    }
+    .user-dropdown-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #1f2937;
+      margin-bottom: 6px;
+    }
+    .user-avatar-small {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #020617;
+    }
+    .user-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .user-email {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .user-dropdown-item {
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: #e5e7eb;
+      text-align: left;
+      padding: 7px 6px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .user-dropdown-item:hover {
+      background: #1e293b;
+    }
+    .user-dropdown-item[data-action="logout"] {
+      color: #f97373;
+    }
+
+    /* =============== VADEMÉCUM SPOTLIGHT =============== */
+    .vademecum-wrapper {
+      position: relative;
+    }
+    .vademecum-trigger {
+      border: none;
+      background: transparent;
+      color: #cbd5e1;
+      font-size: 13px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .vademecum-trigger:hover {
+      background: rgba(148, 163, 184, 0.18);
+      color: #e5e7eb;
+    }
+    .vademecum-panel {
+      position: absolute;
+      left: 0;
+      top: calc(100% + 8px);
+      width: 320px;
+      background: #020617;
+      border-radius: 14px;
+      border: 1px solid #1f2937;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85);
+      padding: 10px 10px 8px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(4px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 190;
+    }
+    .vademecum-wrapper.open .vademecum-panel {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .vademecum-search-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+    .vademecum-label {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .vademecum-hint {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .vademecum-search-box input {
+      width: 100%;
+      border-radius: 999px;
+      border: 1px solid #1e293b;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 7px 10px;
+      font-size: 13px;
+      margin-bottom: 8px;
+      outline: none;
+    }
+    .vademecum-search-box input::placeholder {
+      color: #6b7280;
+    }
+    .vademecum-results {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .vademecum-result-item {
+      width: 100%;
+      text-align: left;
+      border-radius: 10px;
+      border: none;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 7px 8px;
+      cursor: pointer;
+    }
+    .vademecum-result-item .title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .vademecum-result-item .subtitle {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .vademecum-result-item:hover {
+      background: #1e293b;
+    }
+    .vademecum-main {
+      border: 1px solid #2563eb;
+    }
+
+    /* =============== LAYOUT APRENDIZAJE =============== */
+    .learning-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      height: calc(100vh - 60px);
+    }
+    .learning-sidebar {
+      background: #020617;
+      border-right: 1px solid #1e293b;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sidebar-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .sidebar-item {
+      border: none;
+      background: transparent;
+      color: #cbd5e1;
+      text-align: left;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .sidebar-item:hover {
+      background: #1e293b;
+    }
+    .sidebar-item.active {
+      background: #1d4ed8;
+      color: #f9fafb;
+    }
+    .learning-main {
+      padding: 24px 28px;
+      overflow-y: auto;
+    }
+    .learning-main h2 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .learning-main p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 14px;
+    }
+
+    /* =============== CURSO CARDS =============== */
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .course-card {
+      background: #020617;
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+      padding: 12px 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .course-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .course-category {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .course-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .course-progress-bar {
+      width: 100%;
+      height: 5px;
+      border-radius: 999px;
+      background: #0f172a;
+      overflow: hidden;
+      margin: 4px 0;
+    }
+    .course-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #16a34a);
+      width: 0%;
+    }
+    .course-status {
+      font-size: 12px;
+    }
+    .course-status.en-curso {
+      color: #22c55e;
+    }
+    .course-status.terminado {
+      color: #38bdf8;
+    }
+    .course-status.disponible {
+      color: #eab308;
+    }
+    .course-actions {
+      margin-top: 4px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+    .btn-ghost,
+    .btn-primary {
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 5px 9px;
+      border: 1px solid #1e293b;
+      background: transparent;
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+    }
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+    .btn-ghost:hover {
+      background: #111827;
+    }
+
+    /* =============== PROGRESO MI PROGRESO =============== */
+    .progress-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .summary-card {
+      background: #020617;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      padding: 10px 12px;
+    }
+    .summary-label {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .summary-value {
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+
+    /* =============== BOTÓN FLOTANTE ALGORITMOS =============== */
+    .alg-btn {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      border-radius: 999px;
+      border: none;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #f9fafb;
+      cursor: pointer;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+      z-index: 180;
+    }
+    .alg-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .alg-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 170;
+    }
+    .alg-backdrop.show {
+      display: flex;
+    }
+    .alg-modal {
+      width: min(900px, 96vw);
+      max-height: 90vh;
+      background: #020617;
+      border-radius: 18px;
+      border: 1px solid #1f2937;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.9);
+      padding: 14px 14px 12px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 800px) {
+      .alg-modal {
+        grid-template-columns: 1fr;
+      }
+    }
+    .alg-modal h3 {
+      grid-column: 1 / -1;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    .alg-item {
+      width: 100%;
+      text-align: left;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 12px;
+      padding: 7px 8px;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+    .alg-item:hover {
+      background: #1e293b;
+    }
+    .alg-preview {
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .alg-preview img {
+      max-width: 100%;
+      max-height: 80vh;
+      display: block;
+    }
+    .alg-close-btn {
+      grid-column: 1 / -1;
+      justify-self: flex-end;
+      margin-top: 4px;
+      font-size: 11px;
+      border-radius: 999px;
+      border: none;
+      padding: 4px 10px;
+      background: #111827;
+      color: #e5e7eb;
+      cursor: pointer;
+    }
+
+    /* =============== MODALES PERFIL / CALIFICACIONES =============== */
+    .panel-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+    }
+    .panel-backdrop.show {
+      display: flex;
+    }
+    .panel-card {
+      width: min(460px, 96vw);
+      max-height: 85vh;
+      background: #020617;
+      border-radius: 16px;
+      border: 1px solid #1f2937;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+      padding: 14px 16px 14px;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-card-wide {
+      width: min(720px, 96vw);
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .panel-header h3 {
+      font-size: 16px;
+    }
+    .panel-close {
+      border: none;
+      border-radius: 999px;
+      width: 26px;
+      height: 26px;
+      background: #111827;
+      color: #e5e7eb;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .panel-body {
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 4px;
+    }
+    #profileForm label {
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    #profileForm input {
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 6px 8px;
+      font-size: 13px;
+    }
+    .panel-primary-btn {
+      margin-top: 6px;
+      border-radius: 999px;
+      border: none;
+      padding: 7px 11px;
+      font-size: 13px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #f9fafb;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .panel-hint {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .grades-course {
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      font-size: 12px;
+    }
+    .grades-course-title {
+      font-weight: 600;
+    }
+    .grades-course-meta {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .grades-course-status {
+      font-size: 12px;
+    }
+    .grades-course-status.en-curso {
+      color: #22c55e;
+    }
+    .grades-course-status.terminado {
+      color: #38bdf8;
+    }
+    .grades-course-status.disponible {
+      color: #eab308;
+    }
+
+    @media (max-width: 800px) {
+      .learning-layout {
+        grid-template-columns: 1fr;
+      }
+      .learning-sidebar {
+        flex-direction: row;
+        flex-wrap: wrap;
+        border-right: none;
+        border-bottom: 1px solid #1e293b;
+      }
+      .learning-main {
+        padding: 18px 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <span class="nav-logo">Campus Médico</span>
+
+      <a href="dashboard.html" class="top-nav-item">Inicio</a>
+
+      <span id="navTools" class="top-nav-item">Herramientas</span>
+
+      <div class="top-nav-item vademecum-wrapper">
+        <button class="vademecum-trigger" id="vademecumTrigger">Vademécum</button>
+        <div class="vademecum-panel" id="vademecumPanel">
+          <div class="vademecum-search-header">
+            <span class="vademecum-label">Vademécum</span>
+            <span class="vademecum-hint">Búsqueda avanzada próximamente</span>
+          </div>
+          <div class="vademecum-search-box">
+            <input id="vademecumSearch" type="text"
+              placeholder="Busca síntomas, marcas o principios activos…" />
+          </div>
+          <div class="vademecum-results">
+            <button
+              class="vademecum-result-item vademecum-main"
+              data-url="https://www.campus-medicofa.com/revistawebmovil/Vademecum.aspx">
+              <div class="title">Vademécum Campus Médico</div>
+              <div class="subtitle">Consulta completa de productos y fichas técnicas.</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <span class="top-nav-item active">Aprendizaje</span>
+    </div>
+
+    <div class="nav-right">
+      <div class="nav-user-wrapper">
+        <button id="navUserButton" class="nav-user-btn">
+          <span id="navUserInitials">US</span>
+        </button>
+        <div id="userDropdown" class="user-dropdown">
+          <div class="user-dropdown-header">
+            <div id="userAvatarInitials" class="user-avatar-small">US</div>
+            <div>
+              <div id="userDropdownName" class="user-name">Usuario</div>
+              <div id="userDropdownEmail" class="user-email">usuario@correo.com</div>
+            </div>
+          </div>
+          <button class="user-dropdown-item" data-action="profile">Perfil</button>
+          <button class="user-dropdown-item" data-action="grades">Calificaciones</button>
+          <button class="user-dropdown-item" data-action="logout">Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- LAYOUT PRINCIPAL -->
+  <div class="learning-layout">
+    <!-- SIDEBAR -->
+    <aside class="learning-sidebar">
+      <div class="sidebar-title">Aprendizaje</div>
+      <button class="sidebar-item active" data-view="myCourses">Mis cursos</button>
+      <button class="sidebar-item" data-view="catalog">Catálogo de cursos</button>
+      <button class="sidebar-item" data-view="progress">Mi progreso</button>
+    </aside>
+
+    <!-- MAIN -->
+    <main id="learningMain" class="learning-main">
+      <!-- contenido dinámico -->
+    </main>
+  </div>
+
+  <!-- BOTÓN FLOTANTE ALGORITMOS -->
+  <button id="algButton" class="alg-btn">Algoritmo</button>
+
+  <!-- MODAL ALGORITMOS -->
+  <div id="algModalBackdrop" class="alg-backdrop">
+    <div class="alg-modal">
+      <h3>Algoritmos clínicos</h3>
+
+      <div>
+        <button class="alg-item"
+          data-img="https://via.placeholder.com/900x600.png?text=Algoritmo+Ansiedad">
+          Ansiedad
+        </button>
+        <button class="alg-item"
+          data-img="https://via.placeholder.com/900x600.png?text=Algoritmo+Depresion">
+          Depresión
+        </button>
+        <button class="alg-item"
+          data-img="https://via.placeholder.com/900x600.png?text=Algoritmo+Estres">
+          Estrés
+        </button>
+        <button class="alg-item"
+          data-img="https://via.placeholder.com/900x600.png?text=Algoritmo+LAB+Ginecologia">
+          LAB Ginecológico
+        </button>
+      </div>
+
+      <div class="alg-preview">
+        <img id="algPreviewImage" src="" alt="Algoritmo clínico" />
+      </div>
+
+      <button id="algClose" class="alg-close-btn">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- MODAL PERFIL -->
+  <div id="profileModal" class="panel-backdrop">
+    <div class="panel-card">
+      <div class="panel-header">
+        <h3>Perfil</h3>
+        <button class="panel-close" data-close-profile>&times;</button>
+      </div>
+      <form id="profileForm" class="panel-body">
+        <label>
+          Nombre
+          <input type="text" id="profileName" />
+        </label>
+        <label>
+          Email
+          <input type="email" id="profileEmail" />
+        </label>
+        <label>
+          Teléfono
+          <input type="text" id="profilePhone" />
+        </label>
+        <label>
+          Especialidad / Tipo
+          <input type="text" id="profileType" />
+        </label>
+        <button type="submit" class="panel-primary-btn">Guardar cambios</button>
+        <p class="panel-hint">
+          Se guarda localmente en <code>localStorage</code> por ahora.
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CALIFICACIONES -->
+  <div id="gradesModal" class="panel-backdrop">
+    <div class="panel-card panel-card-wide">
+      <div class="panel-header">
+        <h3>Progreso y calificaciones</h3>
+        <button class="panel-close" data-close-grades>&times;</button>
+      </div>
+      <div id="gradesList" class="panel-body"></div>
+    </div>
+  </div>
+
+  <script>
+    // ===================== DATA DEMO DE CURSOS =====================
+    const courseSections = [
+      {
+        title: "Actualización médica",
+        courses: [
+          {
+            id: "abc-ansiedad",
+            name: "ABC de la Ansiedad",
+            category: "Salud mental",
+            meta: "Duración: 4 módulos",
+            statusType: "en-curso",
+            statusText: "En curso · 45%",
+            progress: 45,
+            enrolled: true
+          },
+          {
+            id: "abc-depresion",
+            name: "ABC de la Depresión",
+            category: "Salud mental",
+            meta: "Duración: 3 módulos",
+            statusType: "disponible",
+            statusText: "Disponible para inscripción",
+            progress: 0,
+            enrolled: false
+          },
+          {
+            id: "ergerx",
+            name: "Manejo integral de ERGE",
+            category: "Gastroenterología",
+            meta: "Duración: 5 módulos",
+            statusType: "terminado",
+            statusText: "Terminado · 100%",
+            progress: 100,
+            enrolled: true
+          }
+        ]
+      },
+      {
+        title: "Innovación / Editorial",
+        courses: [
+          {
+            id: "sii",
+            name: "Síndrome de Intestino Irritable",
+            category: "Gastroenterología",
+            meta: "Artículo + caso clínico",
+            statusType: "en-curso",
+            statusText: "En curso · 20%",
+            progress: 20,
+            enrolled: true
+          }
+        ]
+      }
+    ];
+
+    // ===================== UTILIDADES USUARIO =====================
+    function getCurrentUser() {
+      const raw = localStorage.getItem("currentUser");
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch {
+        return null;
+      }
+    }
+    function getInitials(name) {
+      if (!name) return "US";
+      const parts = name.trim().split(/\s+/);
+      let ini = parts[0][0] || "";
+      if (parts.length > 1) ini += parts[parts.length - 1][0] || "";
+      return ini.toUpperCase();
+    }
+
+    // ========= NAVEGAR A UN CURSO (curso.html?id=...) =========
+    function goToCourse(courseId) {
+      if (!courseId) return;
+      window.location.href = "curso.html?id=" + encodeURIComponent(courseId);
+    }
+
+    // ===================== INIT NAV USUARIO =====================
+    const navUserButton = document.getElementById("navUserButton");
+    const userDropdown = document.getElementById("userDropdown");
+    const navUserInitialsEl = document.getElementById("navUserInitials");
+    const userAvatarInitials = document.getElementById("userAvatarInitials");
+    const userDropdownName = document.getElementById("userDropdownName");
+    const userDropdownEmail = document.getElementById("userDropdownEmail");
+
+    (function initUserNav() {
+      const user = getCurrentUser();
+      if (!user) return;
+      const displayName = user.nombre || user.name || "Usuario";
+      const email = user.email || user.correo || "";
+
+      const initials = getInitials(displayName);
+      navUserInitialsEl.textContent = initials;
+      userAvatarInitials.textContent = initials;
+      userDropdownName.textContent = displayName;
+      userDropdownEmail.textContent = email;
+    })();
+
+    if (navUserButton && userDropdown) {
+      navUserButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        userDropdown.classList.toggle("show");
+      });
+      document.addEventListener("click", (e) => {
+        if (!userDropdown.contains(e.target) && e.target !== navUserButton &&
+            !navUserButton.contains(e.target)) {
+          userDropdown.classList.remove("show");
+        }
+      });
+    }
+
+    // ===================== PERFIL =====================
+    const profileModal = document.getElementById("profileModal");
+    const profileForm = document.getElementById("profileForm");
+    const profileNameInput = document.getElementById("profileName");
+    const profileEmailInput = document.getElementById("profileEmail");
+    const profilePhoneInput = document.getElementById("profilePhone");
+    const profileTypeInput = document.getElementById("profileType");
+
+    function openProfileModal() {
+      const user = getCurrentUser();
+      if (user) {
+        profileNameInput.value = user.nombre || user.name || "";
+        profileEmailInput.value = user.email || user.correo || "";
+        profilePhoneInput.value = user.telefono || "";
+        profileTypeInput.value = user.tipo || user.especialidad || "";
+      }
+      profileModal.classList.add("show");
+    }
+    function closeProfileModal() {
+      profileModal.classList.remove("show");
+    }
+
+    if (profileForm) {
+      profileForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const current = getCurrentUser() || {};
+        const updated = {
+          ...current,
+          nombre: profileNameInput.value,
+          email: profileEmailInput.value,
+          telefono: profilePhoneInput.value,
+          tipo: profileTypeInput.value
+        };
+        localStorage.setItem("currentUser", JSON.stringify(updated));
+
+        const initials = getInitials(updated.nombre);
+        navUserInitialsEl.textContent = initials;
+        userAvatarInitials.textContent = initials;
+        userDropdownName.textContent = updated.nombre || "Usuario";
+        userDropdownEmail.textContent = updated.email || "";
+
+        alert("Perfil actualizado (guardado en esta computadora).");
+        closeProfileModal();
+      });
+    }
+    document.querySelector("[data-close-profile]")
+      .addEventListener("click", closeProfileModal);
+    profileModal.addEventListener("click", (e) => {
+      if (e.target === profileModal) closeProfileModal();
+    });
+
+    // ===================== CALIFICACIONES =====================
+    const gradesModal = document.getElementById("gradesModal");
+    const gradesList = document.getElementById("gradesList");
+    function openGradesModal() {
+      gradesList.innerHTML = "";
+      const allCourses = [];
+      courseSections.forEach(sec => {
+        (sec.courses || []).forEach(course => {
+          allCourses.push({
+            section: sec.title,
+            ...course
+          });
+        });
+      });
+      if (!allCourses.length) {
+        gradesList.textContent = "Aún no hay cursos registrados.";
+      } else {
+        allCourses.forEach(c => {
+          const item = document.createElement("div");
+          item.className = "grades-course";
+          item.innerHTML = `
+            <div class="grades-course-title">${c.name}</div>
+            <div class="grades-course-meta">${c.section} · ${c.meta || ""}</div>
+            <div class="grades-course-status ${c.statusType || ""}">
+              ${c.statusText || "Disponible"}
+            </div>
+          `;
+          gradesList.appendChild(item);
+        });
+      }
+      gradesModal.classList.add("show");
+    }
+    function closeGradesModal() {
+      gradesModal.classList.remove("show");
+    }
+    document.querySelector("[data-close-grades]")
+      .addEventListener("click", closeGradesModal);
+    gradesModal.addEventListener("click", (e) => {
+      if (e.target === gradesModal) closeGradesModal();
+    });
+
+    // ===================== LOGOUT =====================
+    function logoutUser() {
+      localStorage.removeItem("currentUser");
+      window.location.href = "index.html";
+    }
+
+    // ===================== CLICK MENÚ USUARIO =====================
+    userDropdown.querySelectorAll(".user-dropdown-item").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const action = btn.getAttribute("data-action");
+        userDropdown.classList.remove("show");
+        if (action === "profile") openProfileModal();
+        else if (action === "grades") openGradesModal();
+        else if (action === "logout") logoutUser();
+      });
+    });
+
+    // ===================== NAV HERRAMIENTAS =====================
+    const navTools = document.getElementById("navTools");
+    if (navTools) {
+      navTools.style.cursor = "pointer";
+      navTools.addEventListener("click", () => {
+        window.open(
+          "https://www.campus-medicofa.com/revistawebmovil/Default.aspx",
+          "_blank",
+          "noopener"
+        );
+      });
+    }
+
+    // ===================== VADEMÉCUM =====================
+    const vademecumWrapper = document.querySelector(".vademecum-wrapper");
+    const vademecumTrigger = document.getElementById("vademecumTrigger");
+    const vademecumPanel = document.getElementById("vademecumPanel");
+    const vademecumMainBtn = document.querySelector(".vademecum-main");
+    const vademecumSearchInput = document.getElementById("vademecumSearch");
+
+    if (vademecumMainBtn) {
+      const url = vademecumMainBtn.getAttribute("data-url");
+      vademecumMainBtn.addEventListener("click", () => {
+        window.open(url, "_blank", "noopener");
+      });
+    }
+
+    if (vademecumWrapper && vademecumTrigger && vademecumPanel) {
+      vademecumTrigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isOpen = vademecumWrapper.classList.contains("open");
+        if (isOpen) {
+          vademecumWrapper.classList.remove("open");
+        } else {
+          vademecumWrapper.classList.add("open");
+          if (vademecumSearchInput) {
+            setTimeout(() => vademecumSearchInput.focus(), 60);
+          }
+        }
+      });
+      document.addEventListener("click", (e) => {
+        if (!vademecumWrapper.contains(e.target)) {
+          vademecumWrapper.classList.remove("open");
+        }
+      });
+    }
+
+    if (vademecumSearchInput && vademecumMainBtn) {
+      vademecumSearchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          vademecumMainBtn.click();
+        }
+      });
+    }
+
+    // ===================== ALGORITMOS =====================
+    const algButton = document.getElementById("algButton");
+    const algBackdrop = document.getElementById("algModalBackdrop");
+    const algClose = document.getElementById("algClose");
+    const algPreviewImg = document.getElementById("algPreviewImage");
+    const algItems = document.querySelectorAll(".alg-item");
+
+    algButton.addEventListener("click", () => {
+      algBackdrop.classList.add("show");
+    });
+    algClose.addEventListener("click", () => {
+      algBackdrop.classList.remove("show");
+    });
+    algBackdrop.addEventListener("click", (e) => {
+      if (e.target === algBackdrop) algBackdrop.classList.remove("show");
+    });
+    algItems.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const img = btn.getAttribute("data-img");
+        algPreviewImg.src = img;
+      });
+    });
+
+    // ===================== SIDEBAR Y RENDER DE VISTAS =====================
+    const sidebarItems = document.querySelectorAll(".sidebar-item");
+    const learningMain = document.getElementById("learningMain");
+
+    function renderMyCourses() {
+      const coursesInProgress = [];
+      courseSections.forEach(sec => {
+        (sec.courses || []).forEach(c => {
+          if (c.progress > 0 || c.statusType === "en-curso" || c.statusType === "terminado") {
+            coursesInProgress.push({ section: sec.title, ...c });
+          }
+        });
+      });
+
+      let html = `
+        <h2>Mis cursos</h2>
+        <p>Cursos que has comenzado y puedes continuar.</p>
+      `;
+      if (!coursesInProgress.length) {
+        html += `<p>No tienes cursos en progreso todavía.</p>`;
+      } else {
+        html += `<div class="courses-grid">`;
+        coursesInProgress.forEach(c => {
+          html += `
+            <article class="course-card">
+              <div class="course-title">${c.name}</div>
+              <div class="course-category">${c.section} · ${c.category}</div>
+              <div class="course-meta">
+                <span>${c.meta || ""}</span>
+                <span>${c.progress}%</span>
+              </div>
+              <div class="course-progress-bar">
+                <div class="course-progress-fill" style="width:${c.progress}%;"></div>
+              </div>
+              <div class="course-status ${c.statusType}">${c.statusText || ""}</div>
+              <div class="course-actions">
+                <button class="btn-primary" onclick="goToCourse('${c.id}')">Continuar</button>
+              </div>
+            </article>
+          `;
+        });
+        html += `</div>`;
+      }
+      learningMain.innerHTML = html;
+    }
+
+    function renderCatalog() {
+      let html = `
+        <h2>Catálogo de cursos</h2>
+        <p>Explora los cursos disponibles por categoría.</p>
+      `;
+      html += `<div class="courses-grid">`;
+      courseSections.forEach(sec => {
+        (sec.courses || []).forEach(c => {
+          const label =
+            c.statusType === "terminado"
+              ? "Revisar"
+              : c.enrolled
+              ? "Continuar"
+              : "Inscribir";
+
+          html += `
+            <article class="course-card" data-course-id="${c.id}">
+              <div class="course-title">${c.name}</div>
+              <div class="course-category">${sec.title} · ${c.category}</div>
+              <div class="course-meta">
+                <span>${c.meta || ""}</span>
+                <span>${c.progress || 0}%</span>
+              </div>
+              <div class="course-progress-bar">
+                <div class="course-progress-fill" style="width:${c.progress || 0}%;"></div>
+              </div>
+              <div class="course-status ${c.statusType}">${c.statusText || ""}</div>
+              <div class="course-actions">
+                <button class="btn-ghost">Detalles</button>
+                <button class="btn-primary" onclick="goToCourse('${c.id}')">
+                  ${label}
+                </button>
+              </div>
+            </article>
+          `;
+        });
+      });
+      html += `</div>`;
+      learningMain.innerHTML = html;
+    }
+
+    function renderProgress() {
+      let total = 0;
+      let enrolled = 0;
+      let completed = 0;
+      let sumProgress = 0;
+      courseSections.forEach(sec => {
+        (sec.courses || []).forEach(c => {
+          total++;
+          if (c.enrolled) enrolled++;
+          if (c.statusType === "terminado" || c.progress === 100) completed++;
+          sumProgress += c.progress || 0;
+        });
+      });
+      const avgProgress = total ? Math.round(sumProgress / total) : 0;
+
+      let html = `
+        <h2>Mi progreso</h2>
+        <p>Resumen general de tu avance en los cursos.</p>
+        <div class="progress-summary">
+          <div class="summary-card">
+            <div class="summary-label">Cursos totales</div>
+            <div class="summary-value">${total}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Cursos inscritos</div>
+            <div class="summary-value">${enrolled}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Cursos completados</div>
+            <div class="summary-value">${completed}</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Progreso promedio</div>
+            <div class="summary-value">${avgProgress}%</div>
+          </div>
+        </div>
+        <p style="margin-bottom:8px;">Detalle por curso:</p>
+        <div class="courses-grid">
+      `;
+      courseSections.forEach(sec => {
+        (sec.courses || []).forEach(c => {
+          html += `
+            <article class="course-card">
+              <div class="course-title">${c.name}</div>
+              <div class="course-category">${sec.title} · ${c.category}</div>
+              <div class="course-meta">
+                <span>${c.meta || ""}</span>
+                <span>${c.progress || 0}%</span>
+              </div>
+              <div class="course-progress-bar">
+                <div class="course-progress-fill" style="width:${c.progress || 0}%;"></div>
+              </div>
+              <div class="course-status ${c.statusType}">${c.statusText || ""}</div>
+            </article>
+          `;
+        });
+      });
+      html += `</div>`;
+      learningMain.innerHTML = html;
+    }
+
+    sidebarItems.forEach(btn => {
+      btn.addEventListener("click", () => {
+        sidebarItems.forEach(i => i.classList.remove("active"));
+        btn.classList.add("active");
+        const view = btn.getAttribute("data-view");
+        if (view === "myCourses") renderMyCourses();
+        else if (view === "catalog") renderCatalog();
+        else if (view === "progress") renderProgress();
+      });
+    });
+
+    // Render inicial
+    renderMyCourses();
+  </script>
+</body>
+</html>
